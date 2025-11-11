@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import TodoList from './components/TodoList'
 
 
 // ToDoタスク1つ分の「型」
@@ -38,10 +39,12 @@ function App() {
     const newTodo: Todo = {
       id: Date.now(),
       text: inputValue,
-      isCompleted: false
+      isCompleted: false,
+      dueDate: dueDate,
     }
     setTodos([...todos, newTodo])
     setInputValue('')
+    setDueDate('')
   }
 
   // タスク削除処理
@@ -80,28 +83,11 @@ function App() {
         />
         <button type="submit">追加</button>
       </form>
-
+      
       {/* 未完了のタスクリスト */}
       <h2>未完了のタスク</h2>
-      <ul>
-        {todos
-          .filter((todo) => !todo.isCompleted) // isCompleted が false のもの
-          .map((todo) => (
-            <li key={todo.id}>
-              <input
-                type="checkbox"
-                checked={todo.isCompleted}
-                onChange={() => handleToggleComplete(todo.id)}
-              />
-              <span style={{ textDecoration: 'none' }}>
-                {todo.text}
-              </span>
-              <button onClick={() => handleDelete(todo.id)}>
-                削除
-              </button>
-            </li>
-          ))}
-      </ul>
+      <TodoList>
+      </TodoList>
 
       {/* 完了済みのタスクリスト */}
       <h2>完了済みのタスク</h2>
@@ -117,6 +103,7 @@ function App() {
               />
               <span style={{ textDecoration: 'line-through' }}>
                 {todo.text}
+                {todo.dueDate && ` (期限: ${todo.dueDate})`}
               </span>
               <button onClick={() => handleDelete(todo.id)}>
                 削除
