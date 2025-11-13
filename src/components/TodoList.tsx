@@ -1,13 +1,7 @@
 import React from 'react'
 import TodoItem from './TodoItem' // ★ 1. TodoItem を import
+import { Todo } from '../types'
 
-// Todo 型の定義 (App.tsx と同じ)
-type Todo = {
-  id: number
-  text: string
-  isCompleted: boolean
-  dueDate: string
-}
 
 // TodoList が受け取る Props の型
 type TodoListProps = {

@@ -1,36 +1,41 @@
 import React from 'react'
+import { Todo } from '../types' // 型を import
 
-// 1. Todo 型を App.tsx からコピー (ここも本当は別ファイルが良い)
-type Todo = {
-  id: number
-  text: string
-  isCompleted: boolean
-  dueDate: string
-}
-
-// 2. TodoItem が受け取る Props の型を定義
 type TodoItemProps = {
-  todo: Todo // 1件分の Todo オブジェクト
+  todo: Todo
   onToggleComplete: (id: number) => void
   onDelete: (id: number) => void
 }
 
-// 3. TodoItem コンポーネント本体
-//    props を分割代入で受け取る
 const TodoItem = ({ todo, onToggleComplete, onDelete }: TodoItemProps) => {
+
+  // --- ★ ここから追加 ---
+  
+  // 1. 「今日の日付」を 'YYYY-MM-DD' 形式の文字列で取得
+  //    (toISOString() は '2025-11-13T04:46:18.000Z' のような文字列を返すので、
+  //     'T' で分割して日付部分だけを取り出します)
+  const today = new Date().toISOString().split('T')[0];
+
+  // 2. 期限切れかどうかを判断する
+  //    (todo.dueDate が存在し、かつ今日より過去である)
+  const isOverdue = todo.dueDate && todo.dueDate < today;
+
+  // --- ★ ここまで追加 ---
+
   return (
-    // 4. TodoList.tsx から <li> の中身をここに持ってくる
-    <li key={todo.id}>
+    // 3. <li> タグに className を追加
+    //    もし isOverdue が true なら 'overdue' クラスを、そうでなければ空('')を適用
+    <li className={isOverdue ? 'overdue' : ''}> 
       <input
         type="checkbox"
         checked={todo.isCompleted}
-        onChange={() => onToggleComplete(todo.id)} // Props で受け取った関数を呼ぶ
+        onChange={() => onToggleComplete(todo.id)}
       />
       <span style={{ textDecoration: todo.isCompleted ? 'line-through' : 'none' }}>
         {todo.text}
         {todo.dueDate && ` (期限: ${todo.dueDate})`}
       </span>
-      <button onClick={() => onDelete(todo.id)}> {/* Props で受け取った関数を呼ぶ */}
+      <button onClick={() => onDelete(todo.id)}>
         削除
       </button>
     </li>

@@ -2,16 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 // 1. TodoList コンポーネントを import
 import TodoList from './components/TodoList'
-
-// ToDoタスク1つ分の「型」
-// (TodoList.tsx と共有するため、本当は別ファイル (例: src/types.ts) に
-//  分けるのがベストですが、今は App.tsx に残しておきます)
-type Todo = {
-  id: number
-  text: string
-  isCompleted: boolean
-  dueDate: string // 期限
-}
+import {ToDo} from '/types'
 
 function App() {
   const [inputValue, setInputValue] = useState('')
