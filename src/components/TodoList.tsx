@@ -1,6 +1,7 @@
 import React from 'react'
+import TodoItem from './TodoItem' // ★ 1. TodoItem を import
 
-// 1. App.tsx から Todo 型をコピー (import する方がベターだが、一旦コピーでOK)
+// Todo 型の定義 (App.tsx と同じ)
 type Todo = {
   id: number
   text: string
@@ -8,34 +9,28 @@ type Todo = {
   dueDate: string
 }
 
-// 2. TodoList が受け取る Props (情報) の「型」を定義
+// TodoList が受け取る Props の型
 type TodoListProps = {
-  todos: Todo[] // 「todos」という名前で Todo の配列を受け取る
-  onToggleComplete: (id: number) => void // (id) を受け取り、何も返さない(void)関数
-  onDelete: (id: number) => void // (id) を受け取り、何も返さない(void)関数
+  todos: Todo[]
+  onToggleComplete: (id: number) => void
+  onDelete: (id: number) => void
 }
 
-// 3. TodoList コンポーネント本体
-//    props を分割代入で { todos, onToggleComplete, onDelete } として受け取る
 const TodoList = ({ todos, onToggleComplete, onDelete }: TodoListProps) => {
   return (
     <ul>
-      {/* 4. App.tsx から .map() の中身をここに持ってくる */}
+      {/* ★ 2. todos 配列を .map() でループする */}
       {todos.map((todo) => (
-        <li key={todo.id}>
-          <input
-            type="checkbox"
-            checked={todo.isCompleted}
-            onChange={() => onToggleComplete(todo.id)} // Props で受け取った関数を呼ぶ
-          />
-          <span style={{ textDecoration: todo.isCompleted ? 'line-through' : 'none' }}>
-            {todo.text}
-            {todo.dueDate && ` (期限: ${todo.dueDate})`}
-          </span>
-          <button onClick={() => onDelete(todo.id)}> {/* Props で受け取った関数を呼ぶ */}
-            削除
-          </button>
-        </li>
+        
+        // ★ 3. <li> の代わりに <TodoItem /> を呼び出す
+        //      TodoItem が必要とする Props (key, todo, onToggleComplete, onDelete) を渡す
+        <TodoItem 
+          key={todo.id}
+          todo={todo} 
+          onToggleComplete={onToggleComplete}
+          onDelete={onDelete}
+        />
+
       ))}
     </ul>
   )
