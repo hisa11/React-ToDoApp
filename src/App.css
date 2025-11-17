@@ -1,74 +1,1399 @@
-/* App.tsx の一番外側の <div> 
-   画面の中央に配置し、横幅を設定します */
-div {
-  max-width: 600px; /* 最大の横幅 */
-  margin: 2rem auto; /* 上下 2rem、左右 auto(中央寄せ) */
-  padding: 1rem;
+/* ==================== テーマ設定 ==================== */
+:root[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f7fa;
+  --bg-tertiary: #e9ecef;
+  --text-primary: #1a1a1a;
+  --text-secondary: #666666;
+  --border-color: #dee2e6;
+  --accent-color: #3b82f6;
+  --accent-hover: #2563eb;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
-/* フォーム (<form>) のスタイル */
-form {
-  display: flex; /* 横並び */
-  gap: 8px; /* 要素のすき間 */
-  margin-bottom: 2rem; /* 下側に余白 */
+:root[data-theme="dark"] {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --bg-tertiary: #3d3d3d;
+  --text-primary: #f5f5f5;
+  --text-secondary: #a0a0a0;
+  --border-color: #404040;
+  --accent-color: #3b82f6;
+  --accent-hover: #60a5fa;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
-/* テキスト入力欄 (<input type="text">) */
-form input[type="text"] {
-  flex-grow: 1; /* 横幅を可能な限り伸ばす */
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+* {
+  box-sizing: border-box;
 }
 
-/* 追加ボタン (<button type="submit">) */
-form button {
-  padding: 8px 12px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer; /* マウスカーソルを指の形に */
-}
-
-/* リスト全体 (<ul>) */
-ul {
-  list-style: none; /* • (黒丸) を消す */
+/* ==================== アクセシビリティ ==================== */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
   padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
-/* ★★★ここが「タスク一個一個のブロック」のスタイルです★★★ */
-/* タスク (<li>) */
-li {
-  background-color: #f9f9f9;  /* 背景色 */
-  border: 1px solid #eee;     /* 枠線 */
-  border-radius: 8px;         /* 角を丸くする */
-  padding: 12px 16px;         /* 内側の余白 */
-  margin-bottom: 8px;         /* 各ブロック下の余白 */
-
-  /* 中の要素 (チェック、テキスト、ボタン) を横並びにする */
+/* ==================== タイポグラフィ（可読性の最適化）==================== */
+body {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  /* 可読性の基準：16px以上 */
+  font-size: 16px;
+  /* 行間：1.5-2.0倍が推奨 */
+  line-height: 1.6;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  margin: 0;
+  padding: 0;
+  /* コントラスト比4.5:1以上を確保 */
   display: flex;
-  justify-content: space-between; /* 両端に寄せる */
-  align-items: center;          /* 上下中央揃え */
+  justify-content: center;
+  align-items: flex-start;
 }
 
-/* タスクのテキスト (<span>) */
-li span {
-  flex-grow: 1;       /* 横幅を可能な限り伸ばす */
-  margin: 0 12px;     /* 左右にすき間を空ける */
+/* ==================== メインコンテナ ==================== */
+.app-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
 }
 
-/* 削除ボタン (<button>) */
-li button {
-  background-color: #dc3545; /* 赤色 */
+/* ==================== ヘッダー ==================== */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  background: linear-gradient(135deg, var(--accent-color), var(--success-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.sync-indicator {
+  background: var(--success-color);
   color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* ==================== ツールバー ==================== */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: var(--bg-primary);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.btn-add {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.search-bar {
+  flex: 1;
+  min-width: 250px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  background: var(--bg-secondary);
+  padding: 0.25rem;
+  border-radius: 8px;
+}
+
+.filter-buttons button {
+  padding: 0.5rem 1rem;
+  background: transparent;
   border: none;
-  border-radius: 4px;
-  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.filter-buttons button.active {
+  background: var(--accent-color);
+  color: white;
+}
+
+.filter-buttons button:hover:not(.active) {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.sort-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sort-selector label {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.sort-selector select {
+  padding: 0.5rem 1rem;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
   cursor: pointer;
 }
 
-.overdue {
-  background-color: #ffebee; /* 薄い赤色の背景 */
-  color: #d32f2f; /* 文字色も少し濃い赤にする (オプション) */
+/* ==================== ToDoリスト ==================== */
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todo-item {
+  background: var(--bg-primary);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  /* 視覚的階層：十分な余白で分離 */
+  margin-bottom: 0.25rem;
+  overflow: hidden;
+  transition: all 0.3s;
+  box-shadow: var(--shadow);
+  /* 明示的なフィードバック：ホバー時に明確に変化 */
+  cursor: pointer;
+}
+
+.todo-item:hover {
+  border-color: var(--accent-color);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-elevated);
+}
+
+.todo-item:active {
+  transform: translateY(-1px);
+}
+
+.todo-item.overdue {
+  /* 色彩心理学：赤は危険・警告 */
+  border-color: var(--danger-color);
+  background: linear-gradient(to right, var(--bg-primary), rgba(239, 68, 68, 0.08));
+  /* 視覚的階層：緊急性を強調 */
+  box-shadow: 0 2px 12px rgba(239, 68, 68, 0.2);
+}
+
+.todo-item.overdue::before {
+  content: '⚠️ 期限超過';
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: var(--danger-color);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  /* 視覚的階層：最前面に表示 */
+  z-index: 10;
+}
+
+.todo-main {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.todo-checkbox {
+  /* フィッツの法則：十分な大きさ */
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  accent-color: var(--accent-color);
+  /* タップ領域を拡大（実際のサイズより広く） */
+  padding: 8px;
+  margin: -8px;
+  /* ホバー時のフィードバック */
+  transition: all 0.2s;
+}
+
+.todo-checkbox:hover {
+  transform: scale(1.15);
+}
+
+.todo-checkbox:active {
+  transform: scale(1.05);
+}
+
+/* チェック済みアイテムの明確な視覚的フィードバック */
+.todo-item:has(.todo-checkbox:checked) {
+  opacity: 0.7;
+  background: var(--bg-secondary);
+}
+
+.todo-item:has(.todo-checkbox:checked) .todo-text {
+  text-decoration: line-through;
+  color: var(--text-secondary);
+}
+
+.todo-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-wrap: break-word;
+}
+
+.todo-content {
+  flex: 1;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.todo-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.todo-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-wrap: break-word;
+}
+
+.progress-badge {
+  background: var(--accent-color);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.todo-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--text-secondary);
+}
+
+.priority-badge {
+  color: white;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  /* 視覚的階層：影で強調 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 色彩心理学に基づく優先度の色分け */
+.priority-p5,
+.priority-p4 {
+  /* P5,P4：赤（危険・最高優先） */
+  background: linear-gradient(135deg, #dc2626, #991b1b) !important;
+  animation: urgent-pulse 2s infinite;
+}
+
+.priority-p3 {
+  /* P3：オレンジ（警告・高優先） */
+  background: linear-gradient(135deg, #f97316, #ea580c) !important;
+}
+
+.priority-p2 {
+  /* P2：黄色（注意・中優先） */
+  background: linear-gradient(135deg, #eab308, #ca8a04) !important;
+  color: #1a1a1a !important;
+}
+
+.priority-p1 {
+  /* P1：緑（通常・低優先） */
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+}
+
+@keyframes urgent-pulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
+  }
+  50% { 
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.5);
+  }
+}
+
+.todo-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ==================== ボタン（フィッツの法則適用）==================== */
+.btn-icon {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  /* モバイル推奨：44x44px以上 */
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s;
+  /* タップ領域を視覚的に明確に */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon:hover {
+  background: var(--bg-tertiary);
+  transform: scale(1.05);
+  /* 視覚的フィードバック */
+  box-shadow: var(--shadow);
+}
+
+.btn-icon:active {
+  transform: scale(0.98);
+  /* 触覚フィードバックのシミュレーション */
+}
+
+.btn-delete:hover {
+  background: var(--danger-color);
+  border-color: var(--danger-color);
+  color: white;
+}
+
+/* ==================== 詳細表示 ==================== */
+.todo-details {
+  padding: 1rem 1.5rem 1.5rem;
+  background: var(--bg-secondary);
+  border-top: 2px solid var(--border-color);
+}
+
+.detail-section {
+  margin-bottom: 1rem;
+}
+
+.detail-section strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--accent-color);
+  font-size: 0.95rem;
+}
+
+.detail-section p {
+  margin: 0;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.notes {
+  white-space: pre-wrap;
+  background: var(--bg-primary);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.tech-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tech-badge {
+  background: linear-gradient(135deg, var(--accent-color), var(--success-color));
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.links-list,
+.files-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+}
+
+.links-list li,
+.files-list li {
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: var(--bg-primary);
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.links-list a {
+  color: var(--accent-color);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.links-list a:hover {
+  text-decoration: underline;
+}
+
+/* ファイル添付表示 - タップターゲット最適化 */
+.file-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.file-attachment {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  min-height: 44px; /* Fitts's Law: タッチターゲット */
+  margin: 0;
+  background-color: var(--background-secondary);
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--primary);
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  /* タップエリア拡張 */
+  cursor: pointer;
+}
+
+.file-attachment:hover,
+.file-attachment:focus {
+  background-color: var(--primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.file-attachment:active {
+  transform: translateY(0);
+}
+
+/* リンク表示 - 外部リンク視覚的区別 */
+.todo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  min-height: 40px;
+  margin: 4px 8px 4px 0;
+  background-color: rgba(59, 130, 246, 0.1);
+  border: 1px solid var(--primary);
+  border-radius: 6px;
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.todo-link:hover,
+.todo-link:focus {
+  background-color: var(--primary);
+  color: white;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+  transform: translateY(-1px);
+}
+
+.todo-link::after {
+  content: "↗";
+  font-size: 0.75rem;
+}
+.progress-bar {
+  width: 100%;
+  height: 12px;
+  background-color: var(--background-secondary);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 8px 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--priority-urgent), var(--priority-high));
+  transition: width 0.3s ease-in-out;
+  animation: progress-pulse 2s ease-in-out infinite;
+}
+
+.progress-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-left: 8px;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ==================== モーダル ==================== */
+.modal-overlay,
+.settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.modal-content,
+.settings-modal {
+  background: var(--bg-primary);
+  border-radius: 16px;
+  max-width: 700px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header,
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.modal-header h2,
+.settings-header h2 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 0.5rem;
+  line-height: 1;
+}
+
+.close-button:hover {
+  color: var(--danger-color);
+}
+
+.settings-content {
+  padding: 2rem;
+}
+
+.settings-section {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.settings-section:last-child {
+  border-bottom: none;
+}
+
+.settings-section h3 {
+  margin-top: 0;
+  color: var(--accent-color);
+}
+
+.settings-description {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.settings-input {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.peer-info {
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.peer-id {
+  display: block;
+  background: var(--bg-tertiary);
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  word-break: break-all;
+  margin: 0.5rem 0;
+  color: var(--accent-color);
+}
+
+.btn-copy {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.status-message {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  color: var(--text-primary);
+}
+
+.success-message {
+  color: var(--success-color);
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+.connected-peers ul {
+  list-style: none;
+  padding: 0;
+}
+
+.connected-peers li {
+  background: var(--bg-tertiary);
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+}
+
+.connection-group {
+  margin-top: 1.5rem;
+}
+
+/* ==================== フォーム ==================== */
+.todo-form {
+  padding: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group input[type="url"],
+.form-group textarea,
+.form-group input[type="range"] {
+  width: 100%;
+  /* モバイル推奨：十分な高さ */
+  min-height: 44px;
+  padding: 0.875rem 1rem;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  /* 可読性：16px以上 */
+  font-size: 16px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+  /* 行間：読みやすく */
+  line-height: 1.6;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  /* 明確なフィードバック */
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  /* フォーカス時に視覚的に拡大 */
+  transform: scale(1.01);
+}
+
+/* エラー状態の明確な視覚的フィードバック */
+.form-group input:invalid,
+.form-group textarea:invalid {
+  border-color: var(--danger-color);
+}
+
+.form-group input:invalid:focus,
+.form-group textarea:invalid:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.input-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.input-with-ai,
+.input-with-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.input-with-ai input,
+.input-with-buttons input {
+  flex: 1;
+}
+
+.textarea-with-ai {
+  position: relative;
+}
+
+.textarea-with-ai button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.btn-primary {
+  /* 色彩心理学：青は信頼性と行動促進 */
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  /* モバイル推奨：44px以上の高さ */
+  min-height: 48px;
+  padding: 0.875rem 1.75rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  /* 視覚的階層：影で浮き上がらせる */
+  box-shadow: var(--shadow);
+  /* タップしやすいように余白を確保 */
+  margin: 4px;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-elevated);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow);
+}
+
+/* 緊急性・行動促進用（オレンジ/赤）*/
+.btn-urgent {
+  /* 色彩心理学：オレンジは注意喚起と行動促進 */
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: white;
+  border: none;
+  min-height: 48px;
+  padding: 0.875rem 1.75rem;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+  /* 視覚的階層：最も目立つ */
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.btn-urgent:hover {
+  background: linear-gradient(135deg, #ea580c, #dc2626);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
+}
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+  /* モバイル推奨サイズ */
+  min-height: 44px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  /* ターゲット間の間隔：8px以上 */
+  margin: 4px;
+}
+
+.btn-secondary:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--accent-color);
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
+}
+
+.btn-ai {
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-ai:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+.btn-ai:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.tag,
+.tech-tag {
+  background: var(--accent-color);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tech-tag {
+  background: linear-gradient(135deg, var(--success-color), var(--accent-color));
+}
+
+.tag button,
+.tech-tag button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0;
+  line-height: 1;
+}
+
+.links-list-form,
+.files-list-form {
+  list-style: none;
+  padding: 0;
+  margin-top: 0.75rem;
+}
+
+.links-list-form li,
+.files-list-form li {
+  background: var(--bg-secondary);
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.links-list-form a {
+  color: var(--accent-color);
+  text-decoration: none;
+  word-break: break-all;
+  flex: 1;
+}
+
+.links-list-form button,
+.files-list-form button {
+  background: var(--danger-color);
+  color: white;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.file-input {
+  padding: 0.5rem;
+  background: var(--bg-secondary);
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.reminder-settings {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+/* リマインダーリスト表示 */
+.reminders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.reminder-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.reminder-datetime {
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 140px;
+}
+
+.reminder-message {
+  flex: 1;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.reminder-notified {
+  color: var(--success-color);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.btn-remove-reminder {
+  background: transparent;
+  color: var(--danger-color);
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background 0.2s;
+}
+
+.btn-remove-reminder:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* 新規リマインダー追加 */
+.add-reminder {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  border: 2px dashed var(--border-color);
+}
+
+.add-reminder label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.add-reminder input[type="datetime-local"],
+.add-reminder input[type="text"] {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.btn-add-reminder {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.btn-add-reminder:hover:not(:disabled) {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.btn-add-reminder:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* TodoItem内のリマインダー表示 */
+.reminders-display {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.reminder-display-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.reminder-status {
+  font-size: 1rem;
+}
+
+.reminder-status.active {
+  color: var(--accent-color);
+}
+
+.reminder-status.notified {
+  color: var(--success-color);
+}
+
+.reminder-status.disabled {
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+.reminder-time {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.reminder-msg {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid var(--border-color);
+}
+
+.btn-cancel {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-cancel:hover {
+  background: var(--bg-tertiary);
+}
+
+.btn-save {
+  background: var(--success-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-save:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==================== 空の状態 ==================== */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+/* ==================== レスポンシブ（アダプティブアプローチ）==================== */
+@media (max-width: 768px) {
+  /* スマホ画面で左右合計5%の余白（両サイド2.5%ずつ） */
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    width: 100vw;
+  }
+
+  /* モバイル：認知負荷軽減のため情報密度を下げる */
+  .app-container {
+    padding: 4px 0;
+    margin: 0;
+    width: 100vw;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
+  .app {
+    padding: 4px 2.5vw;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    /* モバイル：垂直方向の展開 */
+    gap: 1rem;
+    width: 100%;
+    padding: 0;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .filter-buttons {
+    width: 100%;
+    justify-content: space-between;
+    /* ターゲット間の間隔：8px以上 */
+    gap: 8px;
+    padding: 0;
+  }
+
+  .filter-buttons button {
+    /* モバイル：タップターゲット拡大 */
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+    flex: 1;
+  }
+
+  .todo-main {
+    flex-wrap: wrap;
+    /* リーチビリティ：親指が届きやすい配置 */
+    padding: 8px 2.5vw;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .todo-item {
+    margin: 0 0 8px 0;
+    padding: 10px 2.5vw;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* モバイル：CTAボタンは画面下部固定 */
+  .btn-add {
+    position: sticky;
+    bottom: 0.5rem;
+    width: calc(100% - 5vw);
+    margin: 4px 2.5vw;
+    /* 視覚的階層：最も目立つ */
+    z-index: 100;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+    box-sizing: border-box;
+  }
+
+  .controls,
+  .filter-group {
+    width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .search-input,
+  input,
+  select,
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .modal-content,
+  .settings-modal {
+    margin: 0.5rem;
+    max-height: 95vh;
+    /* モバイル：フルスクリーン的な体験 */
+  }
+
+  /* モバイル：テキストサイズの最適化 */
+  .todo-text {
+    font-size: 1.05rem;
+    /* 可読性確保 */
+  }
+
+  .todo-meta {
+    font-size: 0.95rem;
+  }
+
+  /* モバイル：アクションボタンを大きく */
+  .todo-actions {
+    gap: 8px;
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 0.75rem;
+  }
+
+  .todo-actions .btn-icon {
+    min-width: 48px;
+    min-height: 48px;
+  }
+}
+
+/* PC/デスクトップ：高密度・水平展開 */
+@media (min-width: 769px) {
+  .app-container {
+    max-width: 1400px;
+  }
+
+  /* PC：多カラムレイアウト可能 */
+  .toolbar {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  /* PC：水平方向の活用 */
+  .search-bar {
+    min-width: 350px;
+  }
+
+  /* PC：マウスの高精度を活用 */
+  .btn-icon {
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  /* PC：ホバーエフェクトを強化 */
+  .todo-item:hover .todo-actions {
+    opacity: 1;
+  }
+
+  .todo-actions {
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
 }

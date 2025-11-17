@@ -1,30 +1,24 @@
-import React from 'react'
-import TodoItem from './TodoItem' // ★ 1. TodoItem を import
-import { Todo } from '../types'
+import TodoItem from './TodoItem'
+import type { Todo } from '../types'
 
-
-// TodoList が受け取る Props の型
 type TodoListProps = {
   todos: Todo[]
   onToggleComplete: (id: number) => void
   onDelete: (id: number) => void
+  onEdit: (todo: Todo) => void
 }
 
-const TodoList = ({ todos, onToggleComplete, onDelete }: TodoListProps) => {
+const TodoList = ({ todos, onToggleComplete, onDelete, onEdit }: TodoListProps) => {
   return (
-    <ul>
-      {/* ★ 2. todos 配列を .map() でループする */}
+    <ul className="todo-list">
       {todos.map((todo) => (
-        
-        // ★ 3. <li> の代わりに <TodoItem /> を呼び出す
-        //      TodoItem が必要とする Props (key, todo, onToggleComplete, onDelete) を渡す
         <TodoItem 
           key={todo.id}
           todo={todo} 
           onToggleComplete={onToggleComplete}
           onDelete={onDelete}
+          onEdit={onEdit}
         />
-
       ))}
     </ul>
   )

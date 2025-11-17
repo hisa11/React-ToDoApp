@@ -66,3 +66,25 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.todo-details-container {
+  flex-grow: 1;       /* 横幅を可能な限り伸ばす (以前 <span> が持っていたもの) */
+  margin: 0 12px;     /* 左右にすき間を空ける (以前 <span> が持っていたもの) */
+  
+  /* ↓↓↓ これが重要 ↓↓↓ */
+  display: flex;          /* 中の要素(タスク名, 詳細) を flex で管理 */
+  flex-direction: column; /* flex の方向を column (縦) にする */
+  justify-content: center;  /* 縦方向の真ん中寄せ (タスクが1行でもOKなように) */
+}
+
+/* タスク名 (上の段) */
+.todo-text {
+  font-size: 1.1rem; /* 少し文字を大きく */
+}
+
+/* タスク詳細 (下の段) */
+.todo-meta {
+  font-size: 0.9rem; /* 少し文字を小さく */
+  color: #666;      /* 文字色を少し薄く */
+  margin-top: 4px;   /* 上のタスク名との間にすき間を空ける */
+}

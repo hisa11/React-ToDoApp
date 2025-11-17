@@ -1,73 +1,372 @@
-# React + TypeScript + Vite
+# 🚀 Engineer's ToDo App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+エンジニア向けの高機能ToDoアプリケーション。フロントエンド、バックエンド、ロボットエンジニアに最適化された、プロジェクト管理と生産性向上のためのツールです。
 
-Currently, two official plugins are available:
+## ✨ 主な機能
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 📋 基本機能
+- タスクの作成、編集、削除、完了管理
+- 優先度設定（P1～P5）
+- 期限設定とリマインダー
+- 進捗状況トラッキング（0-100%）
+- 詳細な説明とメモ機能
 
-## React Compiler
+### 🏷️ エンジニア向け機能
+- **技術スタック管理**: 使用ライブラリ・フレームワークのタグ付け
+- **タスク依存関係**: タスク間の依存関係を設定
+- **所要時間見積もり**: タスクの工数管理
+- **関連リンク**: GitHub、ドキュメント、APIリファレンスへのリンク
+- **ファイル添付**: 設計書、スクリーンショット等の添付
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+### 🤖 AI機能（Gemini API）
+- タスク名・説明の自動修正
+- タグの自動提案
+- 所要時間の自動見積もり
+- メモの構造化・改善
 
-## Expanding the ESLint configuration
+### 🔗 LAN内共有（P2P）
+- WebRTC（PeerJS）を使用したリアルタイム同期
+- サーバー不要のP2P通信
+- チームメンバーとToDoを共有
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 🔔 通知・リマインダー
+- ブラウザ通知機能
+- 期限前の自動リマインダー
+- カスタマイズ可能な通知タイミング
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 🎨 UI/UX
+- ダークモード / ライトモード対応
+- レスポンシブデザイン
+- 高速な検索・フィルタリング
+- ドラッグ&ドロップファイル添付
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🚀 クイックスタート
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### インストール
+
+```bash
+# 依存関係のインストール
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 開発サーバーの起動
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+ブラウザで `http://localhost:5173` を開きます。
+
+### ビルド
+
+```bash
+npm run build
+```
+
+ビルドされたファイルは `dist` フォルダに出力されます。
+
+## 📦 GitHub Pagesへのデプロイ
+
+このアプリは完全にフロントエンドのみで動作するため、GitHub Pagesで簡単にホスティングできます。
+
+### 自動デプロイ（推奨）
+
+1. `vite.config.ts` に以下を追加:
+
+```typescript
+export default defineConfig({
+  plugins: [react()],
+  base: '/React-ToDoApp/', // リポジトリ名に変更
+})
+```
+
+2. package.jsonにデプロイスクリプトを追加:
+
+```json
+{
+  "scripts": {
+    "deploy": "npm run build && gh-pages -d dist"
+  }
+}
+```
+
+3. gh-pagesをインストール:
+
+```bash
+npm install --save-dev gh-pages
+```
+
+4. デプロイ実行:
+
+```bash
+npm run deploy
+```
+
+### 手動デプロイ
+
+1. ビルド実行: `npm run build`
+2. `dist` フォルダの内容をGitHub Pagesにプッシュ
+
+## 🔧 設定
+
+### Gemini API設定
+
+1. アプリの設定画面（⚙️）を開く
+2. [Google AI Studio](https://makersuite.google.com/app/apikey)でAPIキーを取得
+3. APIキーを設定画面に入力して保存
+
+### P2P共有設定
+
+1. 設定画面で「P2P接続を開始」をクリック
+2. 表示されたPeer IDをチームメンバーに共有
+3. チームメンバーのPeer IDを入力して接続
+
+## 📱 使い方
+
+### タスクの作成
+
+1. 「➕ 新しいタスク」ボタンをクリック
+2. タスク情報を入力:
+   - タスク名（必須）
+   - 説明、期限、優先度
+   - 所要時間、タグ、技術スタック
+   - 関連リンク、ファイル添付
+   - 詳細メモ
+
+### AI機能の活用
+
+- 🤖ボタンでAIによる自動修正・提案
+- タスク名の文法チェックと改善
+- 技術的なタグの自動提案
+- 所要時間の見積もり
+- メモの構造化
+
+### フィルタリング・検索
+
+- **フィルター**: すべて / 未完了 / 完了
+- **検索**: タスク名、説明、タグ、ライブラリで検索
+- **ソート**: 作成日 / 期限 / 優先度
+
+## 🛠️ 技術スタック
+
+- **フレームワーク**: React 19 + TypeScript
+- **ビルドツール**: Vite
+- **P2P通信**: PeerJS
+- **AI**: Google Generative AI (Gemini)
+- **通知**: Web Notifications API
+- **ストレージ**: localStorage
+- **CLI**: ブラウザコンソールコマンドインターフェース
+
+## 💻 CLI コマンドリファレンス
+
+ブラウザのコンソールで `todo` オブジェクトを使用してアプリを操作できます。
+
+### 📋 タスク管理コマンド
+
+#### タスク一覧表示
+```javascript
+todo.ls()              // シンプルな一覧
+todo.ls(['-a'])        // 優先度と期限も表示
+todo.ls(['-l'])        // 詳細情報も表示
+```
+
+#### タスク詳細表示
+```javascript
+todo.show(123)         // ID 123 のタスク詳細を表示
+```
+
+#### タスク追加
+```javascript
+// シンプルな追加
+todo.add("新しいタスク")
+
+// オプション付き追加
+todo.add("バグ修正", {
+  priority: 4,
+  dueDate: "2025-12-31",
+  description: "本番環境のバグ修正",
+  tags: ["bug", "urgent"],
+  libraries: ["React", "TypeScript"],
+  estimatedTime: 120,
+  notes: "詳細な調査が必要"
+})
+```
+
+#### タスク削除
+```javascript
+todo.rm(123)           // ID 123 のタスクを削除
+```
+
+#### タスク完了トグル
+```javascript
+todo.toggle(123)       // ID 123 のタスクの完了状態を切り替え
+```
+
+#### タスク更新
+```javascript
+// 優先度変更
+todo.update(123, { priority: 5 })
+
+// 複数項目を更新
+todo.update(123, {
+  text: "新しいタイトル",
+  priority: 5,
+  progress: 75
+})
+```
+
+### 🔍 フィルター & 検索コマンド
+
+#### フィルター
+```javascript
+todo.filter('completed')  // 完了タスクのみ
+todo.filter('active')     // 未完了タスクのみ
+todo.filter('overdue')    // 期限超過タスクのみ
+todo.filter('urgent')     // 緊急タスク(P4-P5)のみ
+```
+
+#### タグで検索
+```javascript
+todo.findByTag('React')   // "React" タグのタスクを検索
+todo.findByTag('bug')     // "bug" タグのタスクを検索
+```
+
+#### 統計情報
+```javascript
+todo.stats()              // タスク統計を表示
+```
+
+### ⚙️ 設定コマンド
+
+#### Gemini API設定
+```javascript
+todo.setGeminiApiKey('YOUR_API_KEY_HERE')
+```
+
+#### P2P接続
+```javascript
+// P2P初期化（自分のPeer IDを取得）
+todo.connectP2P()
+
+// 特定のPeerに接続
+todo.connectP2P('peer-id-here')
+
+// P2P切断
+todo.disconnectP2P()
+```
+
+### 📊 データ管理コマンド
+
+#### エクスポート
+```javascript
+todo.export()             // JSON形式でタスクをコンソールに出力
+
+// クリップボードにコピー
+copy(JSON.stringify(todo.getTodos()))
+```
+
+#### インポート
+```javascript
+// JSON文字列からインポート
+todo.import('[{"id":1,"text":"タスク1",...}]')
+
+// 配列からインポート
+todo.import([{id:1, text:"タスク1", ...}])
+```
+
+### ℹ️ ヘルプ & 情報
+
+```javascript
+todo.help()               // コマンド一覧を表示
+todo.version()            // バージョン情報を表示
+```
+
+### 💡 使用例
+
+```javascript
+// 1. 緊急タスクを追加
+todo.add("本番サーバーダウン対応", {
+  priority: 5,
+  dueDate: "2025-11-17T18:00",
+  tags: ["urgent", "production"],
+  estimatedTime: 180
+})
+
+// 2. 未完了の緊急タスクを確認
+todo.filter('urgent')
+
+// 3. タスクIDを確認して完了マーク
+todo.toggle(1234567890)
+
+// 4. 統計を確認
+todo.stats()
+
+// 5. Reactタグのタスクを一覧
+todo.findByTag('React')
+
+// 6. すべてのタスクを詳細表示
+todo.ls(['-l'])
+```
+
+### 🎯 便利なワンライナー
+
+```javascript
+// 期限が今日のタスクを表示
+todo.getTodos().filter(t => 
+  t.dueDate?.startsWith(new Date().toISOString().split('T')[0])
+)
+
+// 優先度でソート
+todo.getTodos().sort((a,b) => b.priority - a.priority)
+
+// 進捗率が50%未満のタスク
+todo.getTodos().filter(t => t.progress < 50)
+
+// 完了率を計算
+const todos = todo.getTodos()
+console.log(`完了率: ${(todos.filter(t=>t.isCompleted).length/todos.length*100).toFixed(1)}%`)
+```
+
+## 📁 プロジェクト構造
+
+```
+src/
+├── components/
+│   ├── TodoItem.tsx      # タスクアイテム
+│   ├── TodoList.tsx      # タスクリスト
+│   ├── TodoForm.tsx      # タスク編集フォーム
+│   └── Settings.tsx      # 設定画面
+├── utils/
+│   ├── geminiApi.ts      # Gemini API統合
+│   ├── p2pSync.ts        # P2P同期
+│   └── notifications.ts  # 通知管理
+├── types.ts              # 型定義
+├── App.tsx               # メインアプリ
+└── App.css               # スタイル
+```
+
+## 🎯 対象ユーザー
+
+- **フロントエンドエンジニア**: React、Vue、Angularプロジェクトの管理
+- **バックエンドエンジニア**: API開発、データベース設計タスクの管理
+- **ロボットエンジニア**: ハードウェア・ソフトウェア統合プロジェクトの管理
+- **技術リード**: チーム全体のタスク管理と進捗追跡
+
+## 🔐 プライバシー
+
+- すべてのデータはブラウザのlocalStorageに保存
+- Gemini APIキーはローカルに保存（外部送信なし）
+- P2P通信は暗号化されたWebRTC接続を使用
+- サーバーを介さないため、データは完全にプライベート
+
+## 📝 ライセンス
+
+MIT License
+
+## 🤝 貢献
+
+プルリクエスト歓迎！バグ報告や機能リクエストはIssueでお願いします。
+
+---
+
+Made with ❤️ for Engineers
