@@ -41,71 +41,7 @@
 - ドラッグ&ドロップファイル添付
 
 ## 🚀 クイックスタート
-
-### インストール
-
-```bash
-# 依存関係のインストール
-npm install
-```
-
-### 開発サーバーの起動
-
-```bash
-npm run dev
-```
-
-ブラウザで `http://localhost:5173` を開きます。
-
-### ビルド
-
-```bash
-npm run build
-```
-
-ビルドされたファイルは `dist` フォルダに出力されます。
-
-## 📦 GitHub Pagesへのデプロイ
-
-このアプリは完全にフロントエンドのみで動作するため、GitHub Pagesで簡単にホスティングできます。
-
-### 自動デプロイ（推奨）
-
-1. `vite.config.ts` に以下を追加:
-
-```typescript
-export default defineConfig({
-  plugins: [react()],
-  base: '/React-ToDoApp/', // リポジトリ名に変更
-})
-```
-
-2. package.jsonにデプロイスクリプトを追加:
-
-```json
-{
-  "scripts": {
-    "deploy": "npm run build && gh-pages -d dist"
-  }
-}
-```
-
-3. gh-pagesをインストール:
-
-```bash
-npm install --save-dev gh-pages
-```
-
-4. デプロイ実行:
-
-```bash
-npm run deploy
-```
-
-### 手動デプロイ
-
-1. ビルド実行: `npm run build`
-2. `dist` フォルダの内容をGitHub Pagesにプッシュ
+[https://hisa11.github.io/React-ToDoApp/](https://hisa11.github.io/React-ToDoApp/)からアクセスすることができます
 
 ## 🔧 設定
 
@@ -115,11 +51,27 @@ npm run deploy
 2. [Google AI Studio](https://makersuite.google.com/app/apikey)でAPIキーを取得
 3. APIキーを設定画面に入力して保存
 
-### P2P共有設定
+### P2P共有 & ワークスペース設定
 
-1. 設定画面で「P2P接続を開始」をクリック
-2. 表示されたPeer IDをチームメンバーに共有
-3. チームメンバーのPeer IDを入力して接続
+#### ワークスペースの作成（新規チーム）
+
+1. ヘッダーの「🏢」ボタンをクリック
+2. 「新規ワークスペース作成」にワークスペース名を入力
+3. 「作成」ボタンをクリック
+4. 表示されたワークスペースIDをチームメンバーに共有
+
+#### ワークスペースへの参加（既存チーム）
+
+1. ヘッダーの「🏢」ボタンをクリック
+2. 「ワークスペースに参加」にワークスペースIDを入力
+3. 「参加」ボタンをクリック
+4. 自動的にタスクが同期されます
+
+#### ワークスペースの切り替え
+
+- ワークスペース一覧から任意のワークスペースをクリック
+- 「📝 個人用」をクリックすると個人モードに戻ります
+- **重要**: 個人用ToDoとワークスペースToDoは完全に分離されています
 
 ## 📱 使い方
 

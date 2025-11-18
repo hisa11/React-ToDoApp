@@ -3,6 +3,7 @@ import './App.css'
 import TodoList from './components/TodoList'
 import TodoForm from './components/TodoForm'
 import Settings from './components/Settings'
+import WorkspaceManager from './components/WorkspaceManager'
 import type { Todo, AppSettings } from './types'
 import { geminiService } from './utils/geminiApi'
 import { p2pSync } from './utils/p2pSync'
@@ -37,21 +38,36 @@ function App() {
   })
 
   const [showSettings, setShowSettings] = useState(false)
+  const [showWorkspace, setShowWorkspace] = useState(false)
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState<'dueDate' | 'priority' | 'createdAt'>('createdAt')
 
+  // 現在のワークスペースに応じてToDoをフィルタリング
+  const getVisibleTodos = () => {
+    return todos.filter((todo) => {
+      if (settings.currentWorkspace) {
+        // ワークスペースモード：ワークスペースIDが一致するもののみ
+        return todo.workspaceId === settings.currentWorkspace
+      } else {
+        // 個人モード：workspaceIdがないもののみ
+        return !todo.workspaceId
+      }
+    })
+  }
+
   // todos state が変更されたら localStorage に保存する
   useEffect(() => {
     localStorage.setItem('todos', JSON.stringify(todos))
     
-    // P2P同期
-    if (p2pSync.isConnected()) {
-      p2pSync.broadcastTodos(todos)
+    // P2P同期（現在のワークスペースのToDoのみ）
+    if (p2pSync.isConnected() && settings.currentWorkspace) {
+      const workspaceTodos = todos.filter((t) => t.workspaceId === settings.currentWorkspace)
+      p2pSync.broadcastTodos(workspaceTodos, settings.currentWorkspace)
     }
-  }, [todos])
+  }, [todos, settings.currentWorkspace])
 
   // 設定が変更されたら localStorage に保存する
   useEffect(() => {
@@ -87,7 +103,7 @@ function App() {
               merged[existingIndex] = receivedTodo
             }
           } else {
-            // 新しいToDoを追加
+            // 新しいToDoを追加（workspaceIdを保持）
             merged.push(receivedTodo)
           }
         })
@@ -130,12 +146,18 @@ function App() {
 
   // タスク保存処理
   const handleSaveTodo = (todo: Todo) => {
+    // 現在のワークスペースIDを設定
+    const todoWithWorkspace = {
+      ...todo,
+      workspaceId: settings.currentWorkspace || undefined,
+    }
+
     if (editingTodo) {
       // 更新
-      setTodos(todos.map((t) => (t.id === todo.id ? todo : t)))
+      setTodos(todos.map((t) => (t.id === todo.id ? todoWithWorkspace : t)))
     } else {
       // 新規追加
-      setTodos([...todos, todo])
+      setTodos([...todos, todoWithWorkspace])
     }
     setShowForm(false)
     setEditingTodo(null)
@@ -168,7 +190,8 @@ function App() {
 
   // フィルタリングとソート
   const getFilteredAndSortedTodos = () => {
-    let filtered = todos
+    // まず現在のワークスペースのToDoのみ取得
+    let filtered = getVisibleTodos()
 
     // フィルター適用
     if (filter === 'active') {
@@ -207,11 +230,19 @@ function App() {
 
   const filteredTodos = getFilteredAndSortedTodos()
 
+  // ワークスペース変更ハンドラー
+  const handleWorkspaceChange = (_workspaceId: string | null) => {
+    // ワークスペース変更時は何もしない（getVisibleTodosが自動的に切り替え）
+  }
+
   return (
     <div className="app-container">
       <header className="app-header">
         <h1>🚀 Engineer's ToDo</h1>
         <div className="header-actions">
+          <button onClick={() => setShowWorkspace(true)} className="btn-icon" title="ワークスペース">
+            🏢
+          </button>
           <button onClick={() => setShowSettings(true)} className="btn-icon" title="設定">
             ⚙️
           </button>
@@ -222,6 +253,14 @@ function App() {
           )}
         </div>
       </header>
+
+      {settings.currentWorkspace && (
+        <div className="workspace-indicator">
+          🏢 ワークスペース:{' '}
+          {settings.workspaces?.find((w) => w.id === settings.currentWorkspace)?.name ||
+            settings.currentWorkspace.substring(0, 8) + '...'}
+        </div>
+      )}
 
       <div className="main-content">
         <div className="toolbar">
@@ -254,19 +293,19 @@ function App() {
               className={filter === 'all' ? 'active' : ''}
               onClick={() => setFilter('all')}
             >
-              すべて ({todos.length})
+              すべて ({getVisibleTodos().length})
             </button>
             <button
               className={filter === 'active' ? 'active' : ''}
               onClick={() => setFilter('active')}
             >
-              未完了 ({todos.filter((t) => !t.isCompleted).length})
+              未完了 ({getVisibleTodos().filter((t) => !t.isCompleted).length})
             </button>
             <button
               className={filter === 'completed' ? 'active' : ''}
               onClick={() => setFilter('completed')}
             >
-              完了 ({todos.filter((t) => t.isCompleted).length})
+              完了 ({getVisibleTodos().filter((t) => t.isCompleted).length})
             </button>
           </div>
 
@@ -323,6 +362,21 @@ function App() {
           settings={settings}
           onSettingsChange={setSettings}
         />
+      )}
+
+      {showWorkspace && (
+        <div className="modal-overlay" onClick={() => setShowWorkspace(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowWorkspace(false)}>
+              ✕
+            </button>
+            <WorkspaceManager
+              settings={settings}
+              setSettings={setSettings}
+              onWorkspaceChange={handleWorkspaceChange}
+            />
+          </div>
+        </div>
       )}
     </div>
   )

@@ -6,6 +6,7 @@ export class P2PSync {
   private peer: Peer | null = null
   private connections: Map<string, DataConnection> = new Map()
   private onTodosUpdate: ((todos: Todo[]) => void) | null = null
+  private currentWorkspaceId: string | null = null
 
   initialize(peerId?: string): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -61,7 +62,7 @@ export class P2PSync {
     })
   }
 
-  connectToPeer(remotePeerId: string): Promise<void> {
+  connectToPeer(remotePeerId: string, workspaceId?: string): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!this.peer) {
         reject(new Error('Peerが初期化されていません。先に「P2P接続を開始」してください'))
@@ -76,11 +77,17 @@ export class P2PSync {
       console.log('🔗 接続を試みています:', remotePeerId)
       const conn = this.peer.connect(remotePeerId, {
         reliable: true, // 信頼性の高い接続を使用
+        metadata: { workspaceId }, // ワークスペースIDをメタデータとして送信
       })
       
       conn.on('open', () => {
         console.log('✅ 接続成功:', remotePeerId)
+        if (workspaceId) {
+          this.currentWorkspaceId = workspaceId
+        }
         this.setupConnection(conn)
+        // 接続後すぐに同期をリクエスト
+        this.requestSync(conn, workspaceId)
         resolve()
       })
 
@@ -105,7 +112,7 @@ export class P2PSync {
 
     conn.on('data', (data) => {
       console.log('📨 データ受信:', data)
-      this.handleIncomingMessage(data as SyncMessage)
+      this.handleIncomingMessage(data as SyncMessage, conn)
     })
 
     conn.on('close', () => {
@@ -119,13 +126,25 @@ export class P2PSync {
     })
   }
 
-  private handleIncomingMessage(message: SyncMessage) {
+  private requestSync(conn: DataConnection, workspaceId?: string) {
+    const message: SyncMessage = {
+      type: 'request',
+      timestamp: Date.now(),
+      workspaceId,
+    }
+    if (conn.open) {
+      conn.send(message)
+    }
+  }
+
+  private handleIncomingMessage(message: SyncMessage, _conn: DataConnection) {
     if (!this.onTodosUpdate) return
 
     switch (message.type) {
       case 'sync':
+      case 'workspace-sync':
         if (message.todos) {
-          // 受信したToDosをマージ
+          // 受信したToDosをマージ（ワークスペースIDでフィルタリング）
           this.onTodosUpdate(message.todos)
         }
         break
@@ -136,17 +155,18 @@ export class P2PSync {
         }
         break
       case 'request':
-        // ToDoリストの要求があった場合、現在のリストを送信
-        this.broadcastTodos([])
+        // ToDoリストの要求があった場合、現在のワークスペースのリストを送信
+        // この処理はApp.tsxで行う
         break
     }
   }
 
-  broadcastTodos(todos: Todo[]) {
+  broadcastTodos(todos: Todo[], workspaceId?: string) {
     const message: SyncMessage = {
-      type: 'sync',
+      type: workspaceId ? 'workspace-sync' : 'sync',
       todos,
       timestamp: Date.now(),
+      workspaceId,
     }
 
     this.connections.forEach((conn) => {
@@ -160,11 +180,20 @@ export class P2PSync {
     this.onTodosUpdate = handler
   }
 
+  setCurrentWorkspace(workspaceId: string | null) {
+    this.currentWorkspaceId = workspaceId
+  }
+
+  getCurrentWorkspace(): string | null {
+    return this.currentWorkspaceId
+  }
+
   disconnect() {
     this.connections.forEach((conn) => {
       conn.close()
     })
     this.connections.clear()
+    this.currentWorkspaceId = null
 
     if (this.peer) {
       this.peer.destroy()
@@ -178,6 +207,10 @@ export class P2PSync {
 
   isConnected(): boolean {
     return this.connections.size > 0
+  }
+
+  getPeerId(): string | null {
+    return this.peer?.id || null
   }
 }
 

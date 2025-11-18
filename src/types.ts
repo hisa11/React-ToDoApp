@@ -17,6 +17,7 @@ export type Todo = {
   notes: string // ノート（詳細なメモ）
   createdAt: number // 作成日時
   updatedAt: number // 更新日時
+  workspaceId?: string // ワークスペースID（個人用はundefined）
 }
 
 export type AttachedFile = {
@@ -36,17 +37,27 @@ export type ReminderSetting = {
   message?: string // カスタムメッセージ
 }
 
+export type Workspace = {
+  id: string // ワークスペースID（Peer IDと同じ）
+  name: string
+  createdAt: number
+  members: string[] // 接続中のメンバーのPeer ID
+}
+
 export type AppSettings = {
   geminiApiKey?: string
   peerId?: string // 自分のPeer ID
   connectedPeers: string[] // 接続中のPeer ID
   theme: 'light' | 'dark'
   notificationsEnabled: boolean
+  currentWorkspace?: string // 現在アクティブなワークスペースID
+  workspaces: Workspace[] // ワークスペース一覧
 }
 
 export type SyncMessage = {
-  type: 'sync' | 'update' | 'delete' | 'request'
+  type: 'sync' | 'update' | 'delete' | 'request' | 'workspace-sync'
   todos?: Todo[]
   todoId?: number
   timestamp: number
+  workspaceId?: string
 }

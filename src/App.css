@@ -1397,3 +1397,168 @@ body {
     transition: opacity 0.2s;
   }
 }
+
+/* ==================== ワークスペース管理 ==================== */
+.workspace-indicator {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.workspace-manager {
+  padding: 1.5rem;
+}
+
+.workspace-manager h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+}
+
+.workspace-manager h4 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.current-workspace {
+  background: var(--bg-tertiary);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.current-workspace p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.workspace-id {
+  font-family: 'Courier New', monospace;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.workspace-list {
+  margin-bottom: 1.5rem;
+}
+
+.workspace-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.workspace-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-secondary);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.workspace-item:hover {
+  border-color: var(--accent-color);
+  background: var(--bg-tertiary);
+}
+
+.workspace-item.active {
+  background: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+.workspace-item.active .btn-leave {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.workspace-item span {
+  flex: 1;
+  cursor: pointer;
+}
+
+.btn-leave {
+  background: var(--danger-color);
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.btn-leave:hover {
+  background: #dc2626;
+}
+
+.workspace-create,
+.workspace-join {
+  margin-bottom: 1.5rem;
+}
+
+.workspace-create input,
+.workspace-join input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  transition: border-color 0.2s;
+}
+
+.workspace-create input:focus,
+.workspace-join input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.workspace-create button,
+.workspace-join button {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.workspace-create button:hover:not(:disabled),
+.workspace-join button:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.workspace-create button:disabled,
+.workspace-join button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error-message {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger-color);
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  border-left: 4px solid var(--danger-color);
+}
