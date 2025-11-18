@@ -1480,14 +1480,58 @@ body {
   border-color: var(--accent-color);
 }
 
-.workspace-item.active .btn-leave {
+.workspace-item.active .btn-leave,
+.workspace-item.active .btn-copy {
   background: rgba(255, 255, 255, 0.2);
   color: white;
 }
 
-.workspace-item span {
+.workspace-item-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
   cursor: pointer;
+}
+
+.workspace-item-content span:first-child {
+  font-weight: 600;
+}
+
+.workspace-id-small {
+  font-size: 0.85rem;
+  font-family: 'Courier New', monospace;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.workspace-item.active .workspace-id-small {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.workspace-item-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-copy {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s;
+  min-width: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-copy:hover {
+  background: var(--accent-hover);
 }
 
 .btn-leave {
@@ -1527,6 +1571,29 @@ body {
 .workspace-join input:focus {
   outline: none;
   border-color: var(--accent-color);
+}
+
+.custom-id-toggle {
+  margin-bottom: 0.75rem;
+}
+
+.custom-id-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.custom-id-toggle input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
+}
+
+.custom-id-input {
+  font-family: 'Courier New', monospace;
 }
 
 .workspace-create button,

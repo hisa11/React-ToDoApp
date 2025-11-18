@@ -10,9 +10,11 @@ type WorkspaceManagerProps = {
 
 export default function WorkspaceManager({ settings, setSettings, onWorkspaceChange }: WorkspaceManagerProps) {
   const [workspaceName, setWorkspaceName] = useState('')
+  const [customWorkspaceId, setCustomWorkspaceId] = useState('')
   const [connectPeerId, setConnectPeerId] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [error, setError] = useState('')
+  const [useCustomId, setUseCustomId] = useState(false)
 
   const handleCreateWorkspace = async () => {
     if (!workspaceName.trim()) {
@@ -20,30 +22,50 @@ export default function WorkspaceManager({ settings, setSettings, onWorkspaceCha
       return
     }
 
+    if (useCustomId && !customWorkspaceId.trim()) {
+      setError('カスタムワークスペースIDを入力してください')
+      return
+    }
+
     setIsCreating(true)
     setError('')
 
     try {
-      // P2P初期化（まだの場合）
-      let peerId = settings.peerId
-      if (!peerId || !p2pSync.getPeerId()) {
-        peerId = await p2pSync.initialize()
-        setSettings({
-          ...settings,
-          peerId,
-        })
+      let workspaceId: string
+
+      if (useCustomId && customWorkspaceId.trim()) {
+        // カスタムIDでP2P初期化
+        try {
+          workspaceId = await p2pSync.initialize(customWorkspaceId.trim())
+        } catch {
+          setError('このIDは既に使用されています。別のIDを試してください')
+          setIsCreating(false)
+          return
+        }
+      } else {
+        // 自動生成IDでP2P初期化
+        let peerId = settings.peerId
+        if (!peerId || !p2pSync.getPeerId()) {
+          peerId = await p2pSync.initialize()
+          setSettings({
+            ...settings,
+            peerId,
+          })
+        }
+        workspaceId = peerId!
       }
 
       // ワークスペース作成
       const workspace: Workspace = {
-        id: peerId!, // 自分のPeer IDをワークスペースIDとして使用
+        id: workspaceId,
         name: workspaceName,
         createdAt: Date.now(),
-        members: [peerId!],
+        members: [workspaceId],
       }
 
       setSettings({
         ...settings,
+        peerId: workspaceId,
         workspaces: [...(settings.workspaces || []), workspace],
         currentWorkspace: workspace.id,
       })
@@ -51,12 +73,29 @@ export default function WorkspaceManager({ settings, setSettings, onWorkspaceCha
       p2pSync.setCurrentWorkspace(workspace.id)
       onWorkspaceChange(workspace.id)
       setWorkspaceName('')
+      setCustomWorkspaceId('')
+      setUseCustomId(false)
       alert(`✅ ワークスペース「${workspaceName}」を作成しました\nワークスペースID: ${workspace.id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : '作成に失敗しました')
     } finally {
       setIsCreating(false)
     }
+  }
+
+  const handleCopyWorkspaceId = (workspaceId: string) => {
+    navigator.clipboard.writeText(workspaceId).then(() => {
+      alert(`✅ ワークスペースIDをコピーしました:\n${workspaceId}`)
+    }).catch(() => {
+      // フォールバック：選択可能なテキストエリアを作成
+      const textarea = document.createElement('textarea')
+      textarea.value = workspaceId
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textarea)
+      alert(`✅ ワークスペースIDをコピーしました:\n${workspaceId}`)
+    })
   }
 
   const handleJoinWorkspace = async () => {
@@ -180,12 +219,29 @@ export default function WorkspaceManager({ settings, setSettings, onWorkspaceCha
               key={workspace.id}
               className={`workspace-item ${settings.currentWorkspace === workspace.id ? 'active' : ''}`}
             >
-              <span onClick={() => handleSwitchWorkspace(workspace.id)}>
-                🏢 {workspace.name}
-              </span>
-              <button className="btn-leave" onClick={() => handleLeaveWorkspace(workspace.id)}>
-                退出
-              </button>
+              <div className="workspace-item-content">
+                <span onClick={() => handleSwitchWorkspace(workspace.id)}>
+                  🏢 {workspace.name}
+                </span>
+                <span className="workspace-id-small" title={workspace.id}>
+                  {workspace.id.substring(0, 12)}...
+                </span>
+              </div>
+              <div className="workspace-item-actions">
+                <button 
+                  className="btn-copy" 
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleCopyWorkspaceId(workspace.id)
+                  }}
+                  title="IDをコピー"
+                >
+                  📋
+                </button>
+                <button className="btn-leave" onClick={() => handleLeaveWorkspace(workspace.id)}>
+                  退出
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -200,6 +256,30 @@ export default function WorkspaceManager({ settings, setSettings, onWorkspaceCha
           placeholder="ワークスペース名"
           disabled={isCreating}
         />
+        
+        <div className="custom-id-toggle">
+          <label>
+            <input
+              type="checkbox"
+              checked={useCustomId}
+              onChange={(e) => setUseCustomId(e.target.checked)}
+              disabled={isCreating}
+            />
+            カスタムIDを使用
+          </label>
+        </div>
+        
+        {useCustomId && (
+          <input
+            type="text"
+            value={customWorkspaceId}
+            onChange={(e) => setCustomWorkspaceId(e.target.value)}
+            placeholder="カスタムワークスペースID（英数字とハイフン）"
+            disabled={isCreating}
+            className="custom-id-input"
+          />
+        )}
+        
         <button onClick={handleCreateWorkspace} disabled={isCreating || !workspaceName.trim()}>
           {isCreating ? '作成中...' : '作成'}
         </button>
