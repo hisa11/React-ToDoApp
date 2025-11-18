@@ -10,7 +10,7 @@ export class GeminiService {
       throw new Error('Gemini APIキーが設定されていません')
     }
     this.genAI = new GoogleGenerativeAI(apiKey)
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-pro' })
+    this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' })
   }
 
   async correctText(text: string, context: string = 'タスク'): Promise<string> {
