@@ -63,9 +63,16 @@ function App() {
     localStorage.setItem('todos', JSON.stringify(todos))
     
     // P2P同期（現在のワークスペースのToDoのみ）
-    if (p2pSync.isConnected() && settings.currentWorkspace) {
-      const workspaceTodos = todos.filter((t) => t.workspaceId === settings.currentWorkspace)
-      p2pSync.broadcastTodos(workspaceTodos, settings.currentWorkspace)
+    if (p2pSync.isConnected()) {
+      if (settings.currentWorkspace) {
+        const workspaceTodos = todos.filter((t) => t.workspaceId === settings.currentWorkspace)
+        p2pSync.broadcastTodos(workspaceTodos, settings.currentWorkspace)
+        console.log('📤 ワークスペースToDoを同期:', workspaceTodos.length, '件')
+      } else {
+        const personalTodos = todos.filter((t) => !t.workspaceId)
+        p2pSync.broadcastTodos(personalTodos)
+        console.log('📤 個人ToDoを同期:', personalTodos.length, '件')
+      }
     }
   }, [todos, settings.currentWorkspace])
 
@@ -109,6 +116,15 @@ function App() {
         })
         return merged
       })
+    })
+
+    // P2P同期リクエストハンドラー設定
+    p2pSync.setSyncRequestHandler((workspaceId) => {
+      // 現在のワークスペースのToDoを返す
+      if (workspaceId) {
+        return todos.filter((t) => t.workspaceId === workspaceId)
+      }
+      return todos.filter((t) => !t.workspaceId)
     })
 
     // リマインダーチェック（1分ごと）

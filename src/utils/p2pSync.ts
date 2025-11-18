@@ -6,6 +6,7 @@ export class P2PSync {
   private peer: Peer | null = null
   private connections: Map<string, DataConnection> = new Map()
   private onTodosUpdate: ((todos: Todo[]) => void) | null = null
+  private onSyncRequest: ((workspaceId?: string) => Todo[]) | null = null
   private currentWorkspaceId: string | null = null
 
   initialize(peerId?: string): Promise<string> {
@@ -124,6 +125,11 @@ export class P2PSync {
       console.error('⚠️ 接続エラー:', conn.peer, error)
       this.connections.delete(conn.peer)
     })
+
+    // 新しい接続が確立されたら、こちらからも同期をリクエスト
+    if (conn.open) {
+      this.requestSync(conn, this.currentWorkspaceId || undefined)
+    }
   }
 
   private requestSync(conn: DataConnection, workspaceId?: string) {
@@ -137,7 +143,7 @@ export class P2PSync {
     }
   }
 
-  private handleIncomingMessage(message: SyncMessage, _conn: DataConnection) {
+  private handleIncomingMessage(message: SyncMessage, conn: DataConnection) {
     if (!this.onTodosUpdate) return
 
     switch (message.type) {
@@ -156,7 +162,19 @@ export class P2PSync {
         break
       case 'request':
         // ToDoリストの要求があった場合、現在のワークスペースのリストを送信
-        // この処理はApp.tsxで行う
+        if (this.onSyncRequest) {
+          const todos = this.onSyncRequest(message.workspaceId)
+          const response: SyncMessage = {
+            type: message.workspaceId ? 'workspace-sync' : 'sync',
+            todos,
+            timestamp: Date.now(),
+            workspaceId: message.workspaceId,
+          }
+          if (conn.open) {
+            conn.send(response)
+            console.log('📤 同期データを送信:', todos.length, '件')
+          }
+        }
         break
     }
   }
@@ -178,6 +196,10 @@ export class P2PSync {
 
   setTodosUpdateHandler(handler: (todos: Todo[]) => void) {
     this.onTodosUpdate = handler
+  }
+
+  setSyncRequestHandler(handler: (workspaceId?: string) => Todo[]) {
+    this.onSyncRequest = handler
   }
 
   setCurrentWorkspace(workspaceId: string | null) {
