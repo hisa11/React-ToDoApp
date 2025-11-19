@@ -1,7 +1,7 @@
 # Engineer's ToDo App
 
 エンジニア向けの高機能ToDoアプリケーション。フロントエンド、バックエンド、ロボットエンジニアに最適化された、プロジェクト管理と生産性向上のためのツールです。
-
+<img width="1920" height="1200" alt="Image" src="https://github.com/user-attachments/assets/6c10968f-4610-4b44-8241-c47085cb3fa1" />
 ## 主な機能
 
 ### 基本機能
@@ -50,7 +50,7 @@
 1. アプリの設定画面（⚙️）を開く
 2. [Google AI Studio](https://makersuite.google.com/app/apikey)でAPIキーを取得
 3. APIキーを設定画面に入力して保存
-
+<img width="1920" height="1200" alt="Image" src="https://github.com/user-attachments/assets/dc930b2e-4329-4692-827d-b18e13edd6c8" />
 ### P2P共有 & ワークスペース設定
 
 #### ワークスペースの作成（新規チーム）
@@ -93,6 +93,8 @@
 - 所要時間の見積もり
 - メモの構造化
 
+  <img width="1920" height="1200" alt="Image" src="https://github.com/user-attachments/assets/affce8e5-ce0b-4a07-acae-54044cafd6b0" />
+
 ### フィルタリング・検索
 
 - **フィルター**: すべて / 未完了 / 完了
@@ -112,6 +114,7 @@
 ## CLI コマンドリファレンス
 
 ブラウザのコンソールで `todo` オブジェクトを使用してアプリを操作できます。
+<img width="889" height="991" alt="Image" src="https://github.com/user-attachments/assets/09f135cf-119e-4704-bfa9-3c582efe04d9" />
 
 ### タスク管理コマンド
 
@@ -311,6 +314,5 @@ src/
 - P2P通信は暗号化されたWebRTC接続を使用
 - サーバーを介さないため、データは完全にプライベート
 
-## ライセンス
-
-MIT License
+## 開発期間
+10月30日〜11月18日(45時間)
