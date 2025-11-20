@@ -99,6 +99,8 @@ npm run deploy    # GitHub Pages へデプロイ
 - フォーム内の AI ボタンを押すと、現在の入力をもとに文章の提案や推敲が走ります
 - タグや工数のヒントも返ってくるので、ラフな入力から整えたいときに便利です
 
+ <img width="1920" height="1200" alt="Image" src="https://github.com/user-attachments/assets/affce8e5-ce0b-4a07-acae-54044cafd6b0" />
+
 ### 検索とフィルタ
 - フィルタ: すべて / 未完了 / 完了
 - 並び替え: 作成日 / 期限 / 優先度
@@ -107,6 +109,8 @@ npm run deploy    # GitHub Pages へデプロイ
 ## CLI での操作
 
 開発者向けにブラウザコンソールから `todo` オブジェクトを操作できます。以下は一部抜粋です。
+
+<img width="889" height="991" alt="Image" src="https://github.com/user-attachments/assets/09f135cf-119e-4704-bfa9-3c582efe04d9" />
 
 ```javascript
 todo.ls(['-l'])        // 詳細付きで一覧
