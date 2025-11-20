@@ -11,6 +11,15 @@
   --success-color: #10b981;
   --warning-color: #f59e0b;
   --danger-color: #ef4444;
+  --priority-critical: #dc2626;
+  --priority-high: #f97316;
+  --priority-medium: #eab308;
+  --priority-low: #10b981;
+  --ai-accent: #8b5cf6;
+  --ai-accent-hover: #7c3aed;
+  --workspace-accent: #5c6ac4;
+  --overdue-bg: rgba(239, 68, 68, 0.1);
+  --progress-strong: #2563eb;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
@@ -27,6 +36,15 @@
   --success-color: #10b981;
   --warning-color: #f59e0b;
   --danger-color: #ef4444;
+  --priority-critical: #f87171;
+  --priority-high: #fb923c;
+  --priority-medium: #facc15;
+  --priority-low: #34d399;
+  --ai-accent: #a78bfa;
+  --ai-accent-hover: #c084fc;
+  --workspace-accent: #7c3aed;
+  --overdue-bg: rgba(239, 68, 68, 0.22);
+  --progress-strong: #60a5fa;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
@@ -72,8 +90,11 @@ body {
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
-  padding: 2rem;
+  padding: clamp(1.25rem, 4vw, 3rem);
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 /* ==================== ヘッダー ==================== */
@@ -120,6 +141,16 @@ body {
   background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: var(--shadow);
+}
+
+.main-content {
+  background: var(--bg-primary);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .btn-add {
@@ -231,7 +262,7 @@ body {
 .todo-item.overdue {
   /* 色彩心理学：赤は危険・警告 */
   border-color: var(--danger-color);
-  background: linear-gradient(to right, var(--bg-primary), rgba(239, 68, 68, 0.08));
+  background: var(--overdue-bg);
   /* 視覚的階層：緊急性を強調 */
   box-shadow: 0 2px 12px rgba(239, 68, 68, 0.2);
 }
@@ -351,27 +382,31 @@ body {
 }
 
 /* 色彩心理学に基づく優先度の色分け */
-.priority-p5,
-.priority-p4 {
-  /* P5,P4：赤（危険・最高優先） */
-  background: linear-gradient(135deg, #dc2626, #991b1b) !important;
+.priority-p5 {
+  /* P5：最優先の赤 */
+  background: var(--priority-critical) !important;
   animation: urgent-pulse 2s infinite;
 }
 
+.priority-p4 {
+  /* P4：強い警告の赤 */
+  background: #b91c1c !important;
+}
+
 .priority-p3 {
-  /* P3：オレンジ（警告・高優先） */
-  background: linear-gradient(135deg, #f97316, #ea580c) !important;
+  /* P3：高優先のオレンジ */
+  background: var(--priority-high) !important;
 }
 
 .priority-p2 {
-  /* P2：黄色（注意・中優先） */
-  background: linear-gradient(135deg, #eab308, #ca8a04) !important;
+  /* P2：中優先のイエロー */
+  background: var(--priority-medium) !important;
   color: #1a1a1a !important;
 }
 
 .priority-p1 {
-  /* P1：緑（通常・低優先） */
-  background: linear-gradient(135deg, #10b981, #059669) !important;
+  /* P1：低優先のグリーン */
+  background: var(--priority-low) !important;
 }
 
 @keyframes urgent-pulse {
@@ -465,7 +500,7 @@ body {
 }
 
 .tech-badge {
-  background: linear-gradient(135deg, var(--accent-color), var(--success-color));
+  background: var(--accent-color);
   color: white;
   padding: 0.4rem 0.8rem;
   border-radius: 6px;
@@ -576,7 +611,7 @@ body {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--priority-urgent), var(--priority-high));
+  background: var(--progress-strong);
   transition: width 0.3s ease-in-out;
   animation: progress-pulse 2s ease-in-out infinite;
 }
@@ -875,7 +910,7 @@ body {
 /* 緊急性・行動促進用（オレンジ/赤）*/
 .btn-urgent {
   /* 色彩心理学：オレンジは注意喚起と行動促進 */
-  background: linear-gradient(135deg, #f97316, #ea580c);
+  background: var(--danger-color);
   color: white;
   border: none;
   min-height: 48px;
@@ -885,7 +920,7 @@ body {
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
   /* 視覚的階層：最も目立つ */
   animation: pulse 2s infinite;
 }
@@ -896,9 +931,9 @@ body {
 }
 
 .btn-urgent:hover {
-  background: linear-gradient(135deg, #ea580c, #dc2626);
+  background: #dc2626;
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.45);
 }
 
 .btn-secondary {
@@ -927,7 +962,7 @@ body {
 }
 
 .btn-ai {
-  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  background: var(--ai-accent);
   color: white;
   border: none;
   padding: 0.75rem 1rem;
@@ -940,6 +975,7 @@ body {
 
 .btn-ai:hover:not(:disabled) {
   transform: scale(1.05);
+  background: var(--ai-accent-hover);
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
 }
 
@@ -968,7 +1004,7 @@ body {
 }
 
 .tech-tag {
-  background: linear-gradient(135deg, var(--success-color), var(--accent-color));
+  background: var(--success-color);
 }
 
 .tag button,
@@ -1242,6 +1278,8 @@ body {
     padding: 0;
     overflow-x: hidden;
     width: 100vw;
+    display: block;
+    align-items: stretch;
   }
 
   /* モバイル：認知負荷軽減のため情報密度を下げる */
@@ -1261,12 +1299,34 @@ body {
     box-sizing: border-box;
   }
 
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .main-content {
+    padding: 1rem 0.75rem;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
   .toolbar {
     flex-direction: column;
     /* モバイル：垂直方向の展開 */
-    gap: 1rem;
+    gap: 0.75rem;
     width: 100%;
-    padding: 0;
+    padding: 0.5rem 0;
+    background: transparent;
+    box-shadow: none;
   }
 
   .form-row {
@@ -1280,13 +1340,23 @@ body {
     /* ターゲット間の間隔：8px以上 */
     gap: 8px;
     padding: 0;
+    overflow-x: auto;
   }
 
   .filter-buttons button {
     /* モバイル：タップターゲット拡大 */
     min-height: 44px;
     padding: 0.75rem 1rem;
-    flex: 1;
+    flex: 1 0 calc(50% - 8px);
+  }
+
+  .search-bar,
+  .sort-selector {
+    width: 100%;
+  }
+
+  .sort-selector {
+    justify-content: space-between;
   }
 
   .todo-main {
@@ -1307,9 +1377,9 @@ body {
   /* モバイル：CTAボタンは画面下部固定 */
   .btn-add {
     position: sticky;
-    bottom: 0.5rem;
-    width: calc(100% - 5vw);
-    margin: 4px 2.5vw;
+    bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+    width: calc(100% - 2.5rem);
+    margin: 4px 1.25rem;
     /* 視覚的階層：最も目立つ */
     z-index: 100;
     box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
@@ -1400,7 +1470,7 @@ body {
 
 /* ==================== ワークスペース管理 ==================== */
 .workspace-indicator {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--workspace-accent);
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
